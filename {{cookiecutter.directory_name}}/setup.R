@@ -1,22 +1,13 @@
-packages <- scan("requirements.txt", what = "", sep = "\n")
+if (!requireNamespace('here'))
+  install.packages('here')
+library('here')
 
-install_load_packages <- function(packages, isPrint = FALSE) {
-  
-  # TODO: write test to see if this scans global or local packages
-  missing_packages <- packages[!(packages %in% installed.packages()[, "Package"])]
-  
-  if (length(missing_packages)) {
-    # install.packages(missing_packages)
-    # TODO: test this
-    lapply(missing_packages, install.packages)
-    
-    # Take a renv snapshot:
-    library('renv')
-    renv::snapshot()
-    # Don't forget to commit this!
-  }
-  
-  if (isPrint) {
-    print(sapply(packages, require, character.only = TRUE))
-  }
-}
+if (!requireNamespace('renv'))
+  install.packages('renv')
+library('renv')
+
+renv::init()
+
+packages <- scan(here('requirements.txt'), what="", sep='\n')
+source(here('src','utils','install_load_packages.R'))
+install_load_packages(packages)
